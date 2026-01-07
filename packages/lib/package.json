@@ -1,0 +1,13 @@
+{
+    "name": "lib",
+    "version": "1.0.0",
+    "main": "index.ts",
+    "type": "module",
+    "dependencies": {
+        "@types/bun": "latest",
+        "es-toolkit": "^1.26.1"
+    },
+    "peerDependencies": {
+        "typescript": "^5"
+    }
+}
