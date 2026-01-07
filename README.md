@@ -218,7 +218,6 @@ node_modules
 
 ```
 $ tree node_modules/app
-$ tree node_modules/app
 node_modules/app
 ├── index.ts
 ├── node_modules
@@ -230,121 +229,7 @@ node_modules/app
 なるほど。`packages/app`ディレクトリの中にある `index.ts` と `package.json` がルート直下の node_modules/app` としてコピーされています。こうなっているからこそ `packages/app/index.ts` がlibパッケージの内容を参照することができる。すなわちapp/index.ts のなかの `import { myShuffle } from "lib";` という参照をちゃんと解決することができる。
 
 
-## 参考情報
 
-
-3. Bun公式ドキュメント [Workspaces](https://bun.com/docs/pm/workspaces)
-
-2. [Bun workspaceで始めるモノレポ生活](https://azukiazusa.dev/blog/bun-workspace/)
-
-3. d2m記事 [Bunでモノレポ環境を構築してみた](https://daichi2mori.com/blog/20241106-bun-workspace)
-
-
-### packagesディレクトリを作る
-
-```
-$ mkdir packages
-```
-
-### ルートディレクトリのpackage.jsonにworkspacesフィールドを追加する
-
-```
-{
-  "name": "bun-workspaces-monorepo-example",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
-...
-```
-
-### サブパッケージを作る
-
-```
-$ mkdir ./packages/lib
-$ mkdir ./packages/app
-```
-
-## libパッケージを作る
-
-```
-$ touch ./packages/lib/package.json
-```
-
-./packages/lib/package.jsonの中身はこんな感じにする
-
-```
-{
-  "name": "lib",
-  "version": "1.0.0",
-  "main": "index.ts",
-  "type": "module",
-  "dependencies": {
-    "es-toolkit": "^1.26.1"
-  }
-}
-```
-
-依存するライブラリを追加してみよう。
-[es-toolkit](https://es-toolkit.dev/)を追加するには次のようにする。
-
-```
-$ cd packages/lib
-$ bun add es-toolkit
-```
-
-外部パッケージから参照できる関数を.index.tsに作ろう。
-
-```
-// packages/lib/index.ts
-import { shuffle } from "es-toolkit";
-
-export const myShuffle = <T>(arr: T[]): T[] = shuffule(arr);
-```
-
-
-## appパッケージを作る
-
-libパッケージからmyShuffle関数をインポートし、コンソールで出力する、というデモンストレーションをappパッケージで実装する。
-
-```
-$ touch ./packages/app/package.json
-```
-
-モノレポの中にあるワークスペースの間で依存関係を追加するには dependencies フィールドに `workspace:*` を追加する。
-
-./packages/app/package.jsonの中身はこんな感じにする
-
-```
-{
-  "name": "app",
-  "version": "1.0.0",
-  "main": "index.ts",
-  "type": "module",
-  "dependencies": {
-    "lib": "workpace:*"
-  }
-}
-```
-
-## appワークスペースがlibをimportするという依存関係を可能にする
-
-ルートディレクトリで
-```
-$ bun install
-```
-とやる。
-
-すると appワークスペースのindex.tsがlibのmyShuffle をimportできるようになる。
-
-```
-// packages/app/index.ts
-import { myShuffle } from "lib";
-
-const data = [1, 2, 3, 4, 5];
-
-console.log(myShuffle(data));
-```
 
 ## アプリが動作することを確認する
 
@@ -358,13 +243,7 @@ $ bun run index.ts
 
 はい、アプリが動きました。libパッケージが作ってexportした `myShuffle` 関数をappパッケージの index.ts がimportして利用することができました。モノレポ、一丁あがり。
 
-
 ## 参考情報
 
-Bunの公式ドキュメントの中に Workspaces に関するページがあった。
-
-- https://bun.com/docs/pm/workspaces
-
-インターネットを "bun モノレポ" と検索すればいくつも参考になるリソースを見つけることができた。
-
-- https://daichi2mori.com/blog/20241106-bun-workspace
+1. Bun公式ドキュメント [Workspaces](https://bun.com/docs/pm/workspaces)
+2. d2m記事 [Bunでモノレポ環境を構築してみた](https://daichi2mori.com/blog/20241106-bun-workspace)
