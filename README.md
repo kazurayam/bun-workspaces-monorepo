@@ -211,8 +211,10 @@ node_modules
 └── typescript -> .bun/typescript@5.9.3/node_modules/typescript
 ```
 
-ルート直下のnode_modulesの中にディレクトリはシンボリックリンクです。たとえば
+ルート直下のnode_modulesの中にあるディレクトリはシンボリックリンクです。たとえば
 `<root>/node_modules/lib`はシンボリックリンクでその実体は `<root>/packages/lib`です。
+
+>node_modulesの中がシンボリックリンクになっているのはbunだから。npmではシンボリックリンクではなく実体としてのファイルがコピーされるらしい。だからnpmのnode_modulesディレクトリはサイズが大きくnpm installコマンドの動作は遅い、らしい。
 
 `<root>/node_modules/lib`ディレクトリの中を眺めてみましょうか。
 
