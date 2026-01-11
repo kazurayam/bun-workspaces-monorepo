@@ -4,8 +4,8 @@
 
 1. TypeScript言語でアプリを作ります。JavaScriptではなくて。
 2. JavaScriptランタイムとして[bun](https://bun.com/)を使います。[Node.js](https://nodejs.org/ja)でも[Deno](https://deno.com/)でもなくて。
-3. パッケージ管理システム[npm](https://www.npmjs.com/)を使わず、bunを使う。
-4. いわゆる「モノレポ」にする。すなわちひとつのGitレポジトリの中に二つ以上のパッケージを格納する。libとappと名付けよう。appのTypeScriptコードがlibの成果物をimportして使う、という依存関係を持たせる。
+3. パッケージ管理システムbunを使う。[npm](https://www.npmjs.com/)でも[yarn](https://yarnpkg.com/)でも[pnpm](https://pnpm.io/)でもなく。
+4. いわゆる「モノレポ」にする。すなわちひとつのGitレポジトリの中に二つ以上のパッケージを格納する。libとappと名付けようか。appのTypeScriptコードがlibの成果物をimportして使う、という依存関係を持たせる。
 
 ## 説明
 
