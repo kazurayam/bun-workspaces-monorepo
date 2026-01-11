@@ -23,7 +23,9 @@ $ bun init -y
 
 >ここで `ROOT` というシェル変数を宣言しレポジトリの最上位のディレクトリのパスを設定した。以下の説明の中で最上位ディレクトリを表現するのに `${ROOT}` という記号で表すことにする。
 
-"bun init"コマンドはBunプロジェクトを作成するコマンド。`-y`オプションは「すべての質問にyesと答える」という意味。"-y"を指定しないと"bun init"コマンドがいろいろ質問してくるが、全部デフォルトで構わないなら"-y"と答えるのが良い。
+"bun init"コマンドはBunプロジェクトの雛形を作成するコマンド。
+
+>`-y`オプションは「すべての質問にyesと答える」という意味。"-y"を指定しないと"bun init"コマンドがいろいろ質問してくるが、全部デフォルトで構わないなら"-y"と答えるのが手間要らずだ。
 
 こんなファイル群が作られる。
 
@@ -46,7 +48,7 @@ $ tree -L 2 .
 
 ### ルート直下の package.json を作る
 
-テキストエディタで `<root>/package.json` をこう書く。
+モノレポを作るにはテキストエディタで `<root>/package.json` に `workspaces` キーを宣言する。
 
 ```
 {
@@ -58,7 +60,7 @@ $ tree -L 2 .
 }
 ```
 
-`workspaces`キーが重要。`workspaces`キーの値として名前を列挙されたサブディレクトリがこのモノレポを構成する。サブディレクトリの中身のことを package と呼んだり workspace と呼ぶこともある。
+`workspaces`キーの値として名前を列挙されたサブディレクトリがこのモノレポを構成する。サブディレクトリの中身のことを package と呼んだり workspace と呼ぶこともある。
 
 >"workspace"という用語は[yarn workspace](https://zenn.dev/uttk/scraps/b4d795387e8368)コマンドから来ているらしい。npmもv7でworkspace機能を追加した。bunはyarnよりも後発だから、yarnの用語をそのまま継承している。
 
@@ -83,7 +85,7 @@ ROOTの直下に `packages` ディレクトリを作り、その下にworkspace�
 
 ### CLAUDE.mdって何?
 
-"bun init"はルート直下に [CLAUDE.md](https://github.com/kazurayam/bun-workspaces-monorepo/blob/master/CLAUDE.md) ファイルを作った。これはnpmユーザがbunを使うのに役立つチートシート。npmの代わりにどういうbunコマンドをタイプすべきかを教えてくれる。とてもありがたい。
+"bun init"コマンドがルート直下に [CLAUDE.md](https://github.com/kazurayam/bun-workspaces-monorepo/blob/master/CLAUDE.md) ファイルを作った。これはnpmユーザがbunを使うのに役立つチートシートだ。npmの代わりにどういうbunコマンドをタイプすべきかを教えてくれる。とてもありがたい。
 
 ### workspaceを作る
 
@@ -130,10 +132,10 @@ $ tree -L 3 .
 }
 ```
 
-appパッケージがes-toolkitに依存することを宣言するにはbun addコマンドを使った。
+libパッケージがes-toolkitに依存することを宣言するにはbun addコマンドを使った。
 
 ```
-$ cd ${ROOT}/packages/app
+$ cd ${ROOT}/packages/lib
 $ bun add es-toolkit
 bun add v1.3.4 (5eb2145b)
 
@@ -157,7 +159,7 @@ appパッケージの `index.ts` が `myShuffle` 関数をimportする。
 
 ```
 // packages/app/index.ts
-import { myShuffle } from "lib";
+import { myShuffle } from "@kazurayam/bun-workspaces-monorepo-lib";
 
 const data = [1, 2, 3, 4, 5];
 
@@ -178,21 +180,15 @@ console.log(myShuffle(data));
 }
 ```
 
-おっと、珍しいものがある。よく見よう。
-
-```
-    "dependencies": {
-        "@kazurayam/bun-workspaces-monorepo-lib": "workspace:*"
-    }
-```
-
-`@kazurayam/bun-workspaces-monorep-app`パッケージが `@kazurayam/bun-workspaces-monorepo-lib` パッケージにdependしますよと宣言している。これがあることによって `packages/app/index.ts` が次のような import 文を書くことができて、コンパイル・エラーにならない。
+おっと、`dependencies` の記述の中に妙なものがある。`@kazurayam/bun-workspaces-monorep-app`パッケージが `@kazurayam/bun-workspaces-monorepo-lib` パッケージにdependしますよと宣言している。これがあるからこそ `packages/app/index.ts` が次のような import 文を書くことができる。
 
 ```
 import { myShuffle } from "@kazurayam/bun-workspaces-monorepo-lib";
 ```
 
-では、`@kazurayam/bun-workpaces-monorepo-lib`パッケージはどこにあるのか？app/package.jsonファイルの中に `"workspace:*"` と書いてあった。これはURLの形式に準じた記法だ。URLのスキーマが "workspace" なのだ。Bun公式ドキュメント[Workspaces](https://bun.com/docs/pm/workspaces)に次のように説明されている。
+では、`@kazurayam/bun-workpaces-monorepo-lib`パッケージの実体がどこにあるのかを `app/package.json` がどう表現しているのだろうか？
+
+`"workspace:*"` と書いてあった。これはURLの形式に準じた記法だ。URLのスキーマが "workspace" なのだ。Bun公式ドキュメント[Workspaces](https://bun.com/docs/pm/workspaces)に次のように説明されている。
 
 >The `workspace:*` and `workspace:^` notations are used in package management to reference internal packages within a monorepo. `workspace:*` refers to the latest version of a package, while `workspace:^` allows for version compatibility, meaning it can reference any compatible version according to semantic versioning rules.
 
@@ -204,13 +200,15 @@ import { myShuffle } from "@kazurayam/bun-workspaces-monorepo-lib";
 "workspace:~" -> "~1.0.1"
 ```
 
+>この説明の中で `1.0.1` というバージョン番号らしき記号が書かれているが、この値がどこから引用されてくるのか、いまいちわからない。多分 `@kazurayam/bun-workspaces-monorepo-lib` パッケージの `package.json` ファイルの中に書かれた `version` キーの値なんだろうなと思う。しかし `^` とか `~` とかいう記号がいったいどのような働きを持つのか、説明がないし、想像できない。あやしい。将来、仕様が変更されるんじゃないかと推測する。
+
 
 ## すべての依存関係をインストールする
 
 rootディレクトリに戻れ。そしてbun installを実行せよ。
 
 ```
-$ cd bun-workspaces-monorep
+$ cd ${ROOT}
 $ bun install
 ```
 
