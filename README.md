@@ -5,7 +5,7 @@
 1. TypeScript言語でアプリを作ります。JavaScriptではなくて。
 2. JavaScriptランタイムとして[bun](https://bun.com/)を使います。[Node.js](https://nodejs.org/ja)でも[Deno](https://deno.com/)でもなくて。
 3. パッケージ管理システムbunを使う。[npm](https://www.npmjs.com/)でも[yarn](https://yarnpkg.com/)でも[pnpm](https://pnpm.io/)でもなく。
-4. いわゆる「モノレポ」にする。すなわちひとつのGitレポジトリの中に二つ以上のパッケージを格納する。libとappと名付けようか。appのTypeScriptコードがlibの成果物をimportして使う、という依存関係を持たせる。
+4. いわゆる「モノレポ」にする。すなわちひとつのGitレポジトリの中に二つ以上のパッケージを収納して開発する。libとappと名付けようか。appのTypeScriptコードがlibの成果物をimportして使う、という依存関係を持たせる。
 
 ## 説明
 
@@ -20,6 +20,8 @@ $ cd  bun-workspaces-monorepo
 $ ROOT=`pwd`
 $ bun init -y
 ```
+
+>ここで `ROOT` というシェル変数を宣言しレポジトリの最上位のディレクトリのパスを設定した。以下の説明の中で最上位ディレクトリを表現するのに `${ROOT}` という記号で表すことにする。
 
 "bun init"コマンドはBunプロジェクトを作成するコマンド。`-y`オプションは「すべての質問にyesと答える」という意味。"-y"を指定しないと"bun init"コマンドがいろいろ質問してくるが、全部デフォルトで構わないなら"-y"と答えるのが良い。
 
