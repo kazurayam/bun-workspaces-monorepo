@@ -4,7 +4,7 @@
 
 1. TypeScript言語でアプリを作ります。JavaScriptではなくて。
 2. JavaScriptランタイムとして[bun](https://bun.com/)を使います。[Node.js](https://nodejs.org/ja)でも[Deno](https://deno.com/)でもなくて。
-3. パッケージ管理システムbunを使う。[npm](https://www.npmjs.com/)でも[yarn](https://yarnpkg.com/)でも[pnpm](https://pnpm.io/)でもなく。
+3. パッケージ管理システムとしてbunを使う。[npm](https://www.npmjs.com/)でも[yarn](https://yarnpkg.com/)でも[pnpm](https://pnpm.io/)でもなく。
 4. いわゆる「モノレポ」にする。すなわちひとつのGitレポジトリの中に二つ以上のパッケージを収納して開発する。libとappと名付けようか。appのTypeScriptコードがlibの成果物をimportして使う、という依存関係を持たせる。
 
 ## 説明
@@ -48,7 +48,7 @@ $ tree -L 2 .
 
 ### ルート直下の package.json を作る
 
-モノレポを作るにはテキストエディタで `<root>/package.json` に `workspaces` キーを宣言する。
+モノレポを作るにはテキストエディタで `${ROOT}/package.json` に `workspaces` キーを宣言する。
 
 ```
 {
@@ -147,7 +147,7 @@ installed es-toolkit@1.43.0
 libパッケージの `index.ts` には `myShuffle` 関数を定義してexportした。
 
 ```
-// packages/lib/index.ts:
+// packages/lib/index.ts
 import { shuffle } from "es-toolkit";
 
 export const myShuffle = <T>(arr: T[]): T[] => shuffle(arr);
@@ -234,6 +234,8 @@ import { myShuffle } from "@kazurayam/bun/workspaces-monorepo-lib";
 これが正しくコンパイルできる。こういう仕組みによってモノレポのなかの２つのパッケージの間にあるべき参照関係が実現されている。
 
 ### bun installコマンドの --linker オプション
+
+余談を一つ。
 
 ```
 $ bun install
