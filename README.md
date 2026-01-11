@@ -214,7 +214,7 @@ $ bun install
 
 すると `packages/app` の下に `node_modules` ディレクトリができる。`packages/lib` の下にも `node_modules` ディレクトリができる。
 
-`<root>/node_modules/app`ディレクトリの中を眺めてみよう。
+`${ROOT}/node_modules/app`ディレクトリの中を眺めてみよう。
 
 ```
 $ cd $ROOT
@@ -251,7 +251,7 @@ $ bun install --linker isolated
 $ bun install --linker hoisted
 ```
 
-これを実行するとルート直下に `node_modules_` ディレクトリが作られる。その中を見ると...
+これを実行するとルート直下に `node_modules` ディレクトリが作られる。その中を見ると...
 
 ```
 $ cd ${ROOT}
@@ -270,9 +270,9 @@ node_modules/@kazurayam
 └── bun-workspaces-monorepo-lib -> ../../packages/lib
 ```
 
-ルート直下のnode_modulesの中に `@kazurayam` ディレクトリができていて、その下に `bun-workspaces-monorepo-app` ができていた。このディレクトリ名は `packages/app/package.json` ファイルの中で `name` キーとして指定した値に基づいて決定されたに違いない。そして `bun-workspaces-monorepo-app` ディレクトリは実はシンボリックリンク出会って、実体は `${ROOT}/packages/app` ディレクトリを指している。
+ルート直下のnode_modulesの中に `@kazurayam` ディレクトリができていて、その下に `bun-workspaces-monorepo-app` ができていた。このディレクトリ名は `packages/app/package.json` ファイルの中で `name` キーとして指定した値に基づいて決定されたに違いない。そして `bun-workspaces-monorepo-app` ディレクトリは実はシンボリックリンクであり、実体は `${ROOT}/packages/app` ディレクトリを指している。
 
-TypeScriptコンパイラはdependenciesの参照関係を解決するのに、workspaceが個別に持っているnode_modulesディレクトリの中を最初に検索するが、見つからなければルート直下にnode_modulesディレクトリがあればその中を検索する、という「巻き上げ」のような動作をする。このような動きをJavaScript用語で「ホイスティング」という。`--linker hoisted` というオプションによって選択することができる。yarnやpnpmはホイスティングをデフォルトの動作とするが、bunは意図的に `--linker isolated` をデフォルトとして選択している。Bun公式ドキュメント[Isolated install](https://bun.com/docs/pm/isolated-installs) の "Using isolated installs / Command line" の説明をみよ。
+TypeScriptコンパイラはdependenciesの参照関係を解決するのに、workspaceが個別に持っているnode_modulesディレクトリがあればその中を最初に検索するが、見つからなければルート直下にnode_modulesディレクトリがあればその中を検索する、という「巻き上げ」のような動作をする。このような動きをJavaScript用語で「ホイスティング」という。`--linker hoisted` というオプションによって選択することができる。yarnやpnpmはホイスティングをデフォルトの動作とするが、bunは意図的に `--linker isolated` をデフォルトとして選択している。Bun公式ドキュメント[Isolated install](https://bun.com/docs/pm/isolated-installs) の "Using isolated installs / Command line" の説明をみよ。
 
 
 ### VSCodeの画面をリフレッシュすべきこと
@@ -287,7 +287,7 @@ packages/app/index.tsを実行してみよう
 ```
 $ cd ${ROOT}
 $ bun run packages/app/index.ts
-[ 1, 2, 3, 5, 4 ]
+[ 5, 3, 1, 2, 4 ]
 ```
 
 はい、アプリが動きました。モノレポ、一丁あがり。
