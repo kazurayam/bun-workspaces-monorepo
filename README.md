@@ -110,7 +110,7 @@ $ tree -L 3 .
 └── tsconfig.json
 ```
 
-### libパッケージを作る
+### @kazurayam/bun-workspace-monorepo-lib パッケージを作る
 
 各workspaceはそれぞれに `package.json` を持つ。
 
@@ -132,7 +132,7 @@ $ tree -L 3 .
 }
 ```
 
-libパッケージがes-toolkitに依存することを宣言するにはbun addコマンドを使った。
+このパッケージがes-toolkitに依存することを宣言するにはbun addコマンドを使った。
 
 ```
 $ cd ${ROOT}/packages/lib
@@ -144,7 +144,7 @@ installed es-toolkit@1.43.0
 [226.00ms] done
 ```
 
-libパッケージの `index.ts` には `myShuffle` 関数を定義してexportした。
+`index.ts` には `myShuffle` 関数を定義してexportした。
 
 ```
 // packages/lib/index.ts
@@ -153,9 +153,9 @@ import { shuffle } from "es-toolkit";
 export const myShuffle = <T>(arr: T[]): T[] => shuffle(arr);
 ```
 
-### appパッケージを作る
+### @kazurayam/bun-workspaces-monorepo-app パッケージを作る
 
-appパッケージの `index.ts` が `myShuffle` 関数をimportする。
+@kazurayam/bun-workspaces-monorepo-app パッケージの `index.ts` が `myShuffle` 関数をimportする。
 
 ```
 // packages/app/index.ts
