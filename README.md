@@ -1,6 +1,6 @@
 # bun-workspaces-monorepo
 
-このGitレポジトリは次のようなことをします。
+このGitレポジトリでわたしは次のようなことをした。
 
 1. TypeScript言語でアプリを作ります。JavaScriptではなくて。
 2. JavaScriptランタイムとして[bun](https://bun.com/)を使います。[Node.js](https://nodejs.org/ja)でも[Deno](https://deno.com/)でもなくて。
