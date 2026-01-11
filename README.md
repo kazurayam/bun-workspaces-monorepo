@@ -6,8 +6,11 @@
 2. JavaScriptランタイムとして[bun](https://bun.com/)を使います。[Node.js](https://nodejs.org/ja)でも[Deno](https://deno.com/)でもなくて。
 3. パッケージ管理システムとしてbunを使う。[npm](https://www.npmjs.com/)でも[yarn](https://yarnpkg.com/)でも[pnpm](https://pnpm.io/)でもなく。
 4. いわゆる「モノレポ」にする。すなわちひとつのGitレポジトリの中に二つ以上のパッケージを収納して開発する。libとappと名付けようか。appのTypeScriptコードがlibの成果物をimportして使う、という依存関係を持たせる。
-5. macOS 15.7.2でやる。Terminalのシェルはbash。
-6. bun v1.3.5がインストール済み
+
+環境は下記の通り。
+- macOS 15.7.2
+- Terminalのシェルはbash
+- bun v1.3.5がインストール済み
 
 ## 説明
 
