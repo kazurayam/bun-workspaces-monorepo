@@ -14,8 +14,10 @@
 ### ルートディレクトリを作る
 
 ```
+$ cd ~/github
 $ mkdir bun-workspaces-monorepo
 $ cd  bun-workspaces-monorepo
+$ ROOT=`pwd`
 $ bun init -y
 ```
 
@@ -24,6 +26,7 @@ $ bun init -y
 こんなファイル群が作られる。
 
 ```
+$ cd ${ROOT}
 $ tree -L 2 .
 .
 ├── bun.lock
@@ -45,7 +48,7 @@ $ tree -L 2 .
 
 ```
 {
-  "name": "bun-workspaces-monorepo-example",
+  "name": "@kazurayam/bun-workspaces-monorepo-example",
   "private": true,
   "workspaces": [
     "packages/*"
@@ -57,7 +60,7 @@ $ tree -L 2 .
 
 >"workspace"という用語は[yarn workspace](https://zenn.dev/uttk/scraps/b4d795387e8368)コマンドから来ているらしい。npmもv7でworkspace機能を追加した。bunはyarnよりも後発だから、yarnの用語をそのまま継承している。
 
-rootの直下に `packages` ディレクトリを作り、その下にworkspaceのディレクトリを作るのが標準的なディレクトリ構成だ。従うべし。
+ROOTの直下に `packages` ディレクトリを作り、その下にworkspaceのディレクトリを作るのが標準的なディレクトリ構成だ。従うべし。
 
 ```
   "workspaces": [
@@ -85,6 +88,7 @@ rootの直下に `packages` ディレクトリを作り、その下にworkspace�
 ルート直下に `packages` ディレクトリを作る。その下に `app` と `lib` ディレクトリを作る。さらにそれぞれの下に `package.json` と `index.ts` を作る。
 
 ```
+$ cd ${ROOT}
 $ tree -L 3 .
 .
 ├── bun.lock
@@ -110,7 +114,7 @@ $ tree -L 3 .
 
 ```
 {
-    "name": "lib",
+    "name": "@kazurayam/bun-workspaces-monorepo-lib",
     "version": "1.0.0",
     "main": "index.ts",
     "type": "module",
@@ -127,7 +131,7 @@ $ tree -L 3 .
 appパッケージがes-toolkitに依存することを宣言するにはbun addコマンドを使った。
 
 ```
-$ cd packages/app
+$ cd ${ROOT}/packages/app
 $ bun add es-toolkit
 bun add v1.3.4 (5eb2145b)
 
@@ -138,8 +142,8 @@ installed es-toolkit@1.43.0
 
 libパッケージの `index.ts` には `myShuffle` 関数を定義してexportした。
 
-packages/lib/index.ts
 ```
+// packages/lib/index.ts:
 import { shuffle } from "es-toolkit";
 
 export const myShuffle = <T>(arr: T[]): T[] => shuffle(arr);
@@ -149,8 +153,8 @@ export const myShuffle = <T>(arr: T[]): T[] => shuffle(arr);
 
 appパッケージの `index.ts` が `myShuffle` 関数をimportする。
 
-packages/app/index.ts
 ```
+// packages/app/index.ts
 import { myShuffle } from "lib";
 
 const data = [1, 2, 3, 4, 5];
@@ -162,33 +166,42 @@ console.log(myShuffle(data));
 
 ```
 {
-    "name": "app",
+    "name": "@kazurayam/bun-workspaces-monorepo-app",
     "version": "1.0.0",
     "main": "index.ts",
     "type": "module",
     "dependencies": {
-        "lib": "workspace:*"
+        "@kazurayam/bun-workspaces-monorepo-lib": "workspace:*"
     }
 }
 ```
 
-おっと、ここに注目しよう。
+おっと、珍しいものがある。よく見よう。
 
 ```
     "dependencies": {
-        "lib": "workspace:*"
+        "@kazurayam/bun-workspaces-monorepo-lib": "workspace:*"
     }
 ```
 
-`lib`というパッケージ名が宣言されている。これがあることによって `packages/app/index.ts` が次のような import 文を書くことができる。
+`@kazurayam/bun-workspaces-monorep-app`パッケージが `@kazurayam/bun-workspaces-monorepo-lib` パッケージにdependしますよと宣言している。これがあることによって `packages/app/index.ts` が次のような import 文を書くことができて、コンパイル・エラーにならない。
 
 ```
-import { myShuffle } from "lib";
+import { myShuffle } from "@kazurayam/bun-workspaces-monorepo-lib";
 ```
 
-さて、`lib`パッケージがどこにあると宣言しているかというと `"workspace:*"` だ。これはURLの形式に準じた記法だ。URLのスキーマが "workspace" なのだ。
+では、`@kazurayam/bun-workpaces-monorepo-lib`パッケージはどこにあるのか？app/package.jsonファイルの中に `"workspace:*"` と書いてあった。これはURLの形式に準じた記法だ。URLのスキーマが "workspace" なのだ。Bun公式ドキュメント[Workspaces](https://bun.com/docs/pm/workspaces)に次のように説明されている。
 
->:の右隣の * は何を表しているのだろうか？ まだ私は勉強不足だ、答えを知らない。
+>The `workspace:*` and `workspace:^` notations are used in package management to reference internal packages within a monorepo. `workspace:*` refers to the latest version of a package, while `workspace:^` allows for version compatibility, meaning it can reference any compatible version according to semantic versioning rules.
+
+>When publishing, workspace: versions are replaced by the package’s package.json version,
+
+```
+"workspace:*" -> "1.0.1"
+"workspace:^" -> "^1.0.1"
+"workspace:~" -> "~1.0.1"
+```
+
 
 ## すべての依存関係をインストールする
 
@@ -199,38 +212,72 @@ $ cd bun-workspaces-monorep
 $ bun install
 ```
 
-するとルート直下に `node_modules` ディレクトリができる。
+すると `packages/app` の下に `node_modules` ディレクトリができる。`packages/lib` の下にも `node_modules` ディレクトリができる。
+
+`<root>/node_modules/app`ディレクトリの中を眺めてみよう。
 
 ```
-$ tree -L 2 node_modules
+$ cd $ROOT
+$ tree -L 2 packages/app/node_modules
+packages/app/node_modules
+├── @kazurayam
+│   └── bun-workspaces-monorepo-lib -> ../../../lib
+└── es-toolkit -> ../../../node_modules/.bun/es-toolkit@1.43.0/node_modules/es-toolkit
+```
+
+なるほど。`packages/app` ディレクトリの中にあるこのパッケージは `@kazurayam/bun-workspaces-monorepo-lib` パッケージに依存していると宣言されている。そして `packages/app/node_modules/@kazurayam/bun-workspaces-monorepo-lib`ディレクトリは実はシンボリックリンクである。このシンボリックリンクは `packages/lib` ディレクトリを指している。こうなっているから `packages/app/index.ts` のなかのコード
+
+```
+import { myShuffle } from "@kazurayam/bun/workspaces-monorepo-lib";
+```
+
+これが正しくコンパイルできる。こういう仕組みによってモノレポのなかの２つのパッケージの間にあるべき参照関係が実現されている。
+
+### bun installコマンドの --linker オプション
+
+```
+$ bun install
+```
+
+これは `--linker isolated` を指定したのと同じだ。
+
+```
+$ bun install --linker isolated
+```
+
+もう一つのやり方がある。
+
+```
+$ bun install --linker hoisted
+```
+
+これを実行するとルート直下に `node_modules_` ディレクトリが作られる。その中を見ると...
+
+```
+$ cd ${ROOT}
+$ tree -L 1 node_modules
 node_modules
+├── @kazurayam
 ├── @types
-│   └── bun -> ../.bun/@types+bun@1.3.5/node_modules/@types/bun
-├── app -> ../packages/app
-├── lib -> ../packages/lib
-└── typescript -> .bun/typescript@5.9.3/node_modules/typescript
+├── bun-types
+├── es-toolkit
+├── typescript
+└── undici-types
+
+$ tree -L 1 ./node_modules/@kazurayam
+node_modules/@kazurayam
+├── bun-workspaces-monorepo-app -> ../../packages/app
+└── bun-workspaces-monorepo-lib -> ../../packages/lib
 ```
 
-ルート直下のnode_modulesの中にあるディレクトリはシンボリックリンクです。たとえば
-`<root>/node_modules/lib`はシンボリックリンクでその実体は `<root>/packages/lib`です。
+ルート直下のnode_modulesの中に `@kazurayam` ディレクトリができていて、その下に `bun-workspaces-monorepo-app` ができていた。このディレクトリ名は `packages/app/package.json` ファイルの中で `name` キーとして指定した値に基づいて決定されたに違いない。そして `bun-workspaces-monorepo-app` ディレクトリは実はシンボリックリンク出会って、実体は `${ROOT}/packages/app` ディレクトリを指している。
 
->node_modulesの中がシンボリックリンクになっているのはbunだから。npmではシンボリックリンクではなく実体としてのファイルがコピーされるらしい。だからnpmのnode_modulesディレクトリはサイズが大きくnpm installコマンドの動作は遅い、らしい。
-
-`<root>/node_modules/lib`ディレクトリの中を眺めてみましょうか。
-
-```
-$ tree node_modules/app
-node_modules/app
-├── index.ts
-├── node_modules
-│   ├── es-toolkit -> ../../../node_modules/.bun/es-toolkit@1.43.0/node_modules/es-toolkit
-│   └── lib -> ../../lib
-└── package.json
-```
-
-なるほど。`packages/app`ディレクトリの中にある `index.ts` と `package.json` がルート直下の node_modules/app` としてコピーされています。こうなっているからこそ `packages/app/index.ts` がlibパッケージの内容を参照することができる。すなわちapp/index.ts のなかの `import { myShuffle } from "lib";` という参照をちゃんと解決することができる。
+TypeScriptコンパイラはdependenciesの参照関係を解決するのに、workspaceが個別に持っているnode_modulesディレクトリの中を最初に検索するが、見つからなければルート直下にnode_modulesディレクトリがあればその中を検索する、という「巻き上げ」のような動作をする。このような動きをJavaScript用語で「ホイスティング」という。`--linker hoisted` というオプションによって選択することができる。yarnやpnpmはホイスティングをデフォルトの動作とするが、bunは意図的に `--linker isolated` をデフォルトとして選択している。Bun公式ドキュメント[Isolated install](https://bun.com/docs/pm/isolated-installs) の "Using isolated installs / Command line" の説明をみよ。
 
 
+### VSCodeの画面をリフレッシュすべきこと
+
+VSCodeを使っているときに一つ注意すべきことがある。bun installコマンドによってディレクトリやファイルを作った時、VSCodeの画面表示にすぐ反映しないかもしれない。「あれ？node_modulesが作られないな？」と迷うかもしれない。これはVSCodeが直接関知しないやり方で生じたファイルシステムの変化をVSCodeがすぐに感知してくれない場合があるからだ。その場合はVSCodeのリフレッシュボタンを明示的に押せばいい。VSCodeを設定して自動的に反映するようにすることもできるから検討してもいい。
 
 
 ## アプリが動作することを確認する
@@ -238,12 +285,12 @@ node_modules/app
 packages/app/index.tsを実行してみよう
 
 ```
-$ cd packages/app
-$ bun run index.ts
+$ cd ${ROOT}
+$ bun run packages/app/index.ts
 [ 1, 2, 3, 5, 4 ]
 ```
 
-はい、アプリが動きました。libパッケージが作ってexportした `myShuffle` 関数をappパッケージの index.ts がimportして利用することができました。モノレポ、一丁あがり。
+はい、アプリが動きました。モノレポ、一丁あがり。
 
 ## 参考情報
 
