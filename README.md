@@ -11,6 +11,7 @@
 - macOS 15.7.2
 - Terminalのシェルはbash
 - bun v1.3.5がインストール済み
+- VSCodeを使用
 
 ## 説明
 
