@@ -253,7 +253,7 @@ $ bun install --linker isolated
 $ bun install --linker hoisted
 ```
 
-これを実行するとルート直下に `node_modules` ディレクトリが作られる。その中を見ると...
+これを実行すると`node_modules` ディレクトリが作られる場所が変わる。`--linker isolated`ならば個別パッケージのディレクトリの下に作られる。`--linker hoisted`ならばレポジトリのルートの下に作られる。その中を見ると...
 
 ```
 $ cd ${ROOT}
