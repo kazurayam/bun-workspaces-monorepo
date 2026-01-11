@@ -66,8 +66,6 @@ $ tree -L 2 .
 
 `workspaces`キーの値として名前を列挙されたサブディレクトリがこのモノレポを構成する。サブディレクトリの中身のことを package と呼んだり workspace と呼ぶこともある。
 
-ルート直下に `packages` というディレクトリを作り、その下にパッケージのディレクトリを配置するのが慣例だ。これ以外のやり方をした例を見たことがない。黙ってこの通りにするのが吉。
-
 >"workspace"という用語は[yarn workspace](https://zenn.dev/uttk/scraps/b4d795387e8368)コマンドから来ているらしい。npmもv7でworkspace機能を追加した。bunはyarnよりも後発だから、yarnの用語をそのまま継承している。
 
 ROOTの直下に `packages` ディレクトリを作り、その下にworkspaceのディレクトリを作るのが標準的なディレクトリ構成だ。従うべし。
