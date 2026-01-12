@@ -87,6 +87,58 @@ ROOTの直下に `packages` ディレクトリを作り、その下にworkspace�
 
 >"workspace"という用語は[yarn workspace](https://zenn.dev/uttk/scraps/b4d795387e8368)コマンドから来ているらしい。npmもv7でworkspace機能を追加した。bunはyarnよりも後発だから、yarnの用語をそのまま継承している。
 
+### npm package nameの形式について
+
+パッケージのnameについて学ぼう。
+ルート直下のpackage.jsonにパッケージのnameを指定すべくこう書いた。
+
+```
+{
+  "name": "@kazurayam/bun-workspaces-monorepo",
+  ...
+```
+
+nameの値には規則があるのか？AIに聞いてみた。
+
+>Npm package names should consist of lowercase letters, and can include punctuation like dots, dashes, and underscores for readability. Additionally, names must be unique within the npm registry, and using the "@" prefix allows for scoped packages to prevent naming conflicts.
+
+#### npm Package Name Conventions
+
+##### General Rules
+- Package names must be lowercase.
+- Names cannot contain spaces or non-url-safe characters.
+- They should not start with a dot (.) or underscore (_).
+- The length must be greater than zero and cannot exceed 214 characters.
+
+##### Valid and Invalid Names
+
+|Valid Names	|Invalid Names|
+|---------------|-------------|
+|my-package	|MyPackage (uppercase letters)|
+|my-package-123	|my package (contains spaces)|
+|@myorg/my-package	|my_package (contains underscores)|
+|my-package-name	|leading-space:and:weirdchars|
+
+#### Scoped Packages
+- Scoped packages use the "@" prefix, followed by a scope name and a package name (e.g., @myorg/mypackage).
+- This helps organize packages and avoid naming conflicts.
+
+#### Naming Best Practices
+- Choose descriptive names that reflect the package's purpose.
+- Maintain consistency in naming conventions across projects.
+- Avoid using names that are the same as existing Node.js core modules.
+
+#### Package.json Script Naming
+- Script names in package.json should be lowercase and can use colons (:) to separate parts and hyphens (-) for words.
+- Common prefixes include:
+  - build: for build scripts
+  - test: for test scripts
+  - lint: for linting scripts
+
+Following these conventions ensures clarity and consistency in package management within the npm ecosystem.
+
+分かった。
+
 ### CLAUDE.mdって何?
 
 "bun init"コマンドがルート直下に [CLAUDE.md](https://github.com/kazurayam/bun-workspaces-monorepo/blob/master/CLAUDE.md) ファイルを作った。これはnpmユーザがbunを使うのに役立つチートシートだ。npmの代わりにどういうbunコマンドをタイプすべきかを教えてくれる。とてもありがたい。
