@@ -56,7 +56,7 @@ $ tree -L 2 .
 
 ```
 {
-  "name": "@kazurayam/bun-workspaces-monorepo-example",
+  "name": "@kazurayam/bun-workspaces-monorepo",
   "private": true,
   "workspaces": [
     "packages/*"
