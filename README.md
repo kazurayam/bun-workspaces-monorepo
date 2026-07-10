@@ -5,7 +5,7 @@
 1. TypeScript言語でアプリを作ります。JavaScriptではなくて。
 2. JavaScriptランタイムとして[bun](https://bun.com/)を使います。[Node.js](https://nodejs.org/ja)でも[Deno](https://deno.com/)でもなくて。
 3. パッケージ管理システムとしてbunを使う。[npm](https://www.npmjs.com/)でも[yarn](https://yarnpkg.com/)でも[pnpm](https://pnpm.io/)でもなく。
-4. いわゆる「モノレポ」にする。すなわちひとつのGitレポジトリの中に二つ以上のパッケージを収納して開発する。libとappと名付けようか。appのTypeScriptコードがlibの成果物をimportして使う、という依存関係を持たせる。
+4. いわゆる「モノレポ」にする。すなわちひとつのGitレポジトリの中に二つ以上のパッケージを収容して開発する。libとappと名付けようか。appのTypeScriptコードがlibの成果物をimportして使う、という依存関係を持たせる。
 
 環境は下記の通り。
 - macOS 15.7.2
@@ -64,7 +64,7 @@ $ tree -L 2 .
 }
 ```
 
-`workspaces`キーの値として名前を列挙されたサブディレクトリがこのモノレポを構成する。サブディレクトリのことを分類的に "workspace" と呼ぶ。一つ一つのworkspaceがビルドを実行して生成する成果物のことを分類的に "package" と呼ぶ。
+`workspaces`キーの値として名前を列挙されたサブディレクトリがこのモノレポを構成する。サブディレクトリのことを分類的に "workspace" と呼ぶ。一つ一つのworkspaceにおいてビルドが実行されてたら、その成果物のことを分類的に "package" と呼ぶ。
 
 ROOTの直下に `packages` ディレクトリを作り、その下にworkspaceのディレクトリを作るのが標準的なディレクトリ構成だ。従うべし。
 
@@ -142,6 +142,11 @@ Following these conventions ensures clarity and consistency in package managemen
 ### CLAUDE.mdって何?
 
 "bun init"コマンドがルート直下に [CLAUDE.md](https://github.com/kazurayam/bun-workspaces-monorepo/blob/master/CLAUDE.md) ファイルを作った。これはnpmユーザがbunを使うのに役立つチートシートだ。npmの代わりにどういうbunコマンドをタイプすべきかを教えてくれる。とてもありがたい。
+
+CLAUDE.md を日本語訳してみた。
+
+- [CLAUDE_ja.md](https://github.com/kazurayam/bun-workspaces-monorepo/blob/master/CLAUDE_ja.md)
+
 
 ### workspaceを作る
 
